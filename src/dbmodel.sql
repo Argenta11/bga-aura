@@ -18,18 +18,65 @@
 -- Note: The database schema is created from this file when the game starts. If you modify this file,
 --       you have to restart a game to see your changes in database.
 
--- Example 1: create a standard "card" table to be used with the "Deck" tools (see example game "hearts"):
+CREATE TABLE IF NOT EXISTS `card` (
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `color` TINYINT UNSIGNED NOT NULL COMMENT '0 (beige), 1 (blue), 2 (green), 3 (purple), 4 (red)',
+  `value` TINYINT UNSIGNED NOT NULL COMMENT '1 to 8 for cards with numbers on them, 9 for wild card, 10 for action card',
+  `owner` INT(10) UNSIGNED COMMENT 'ID of the player who owns the card (0 before player is assigned)',
+  `location` VARCHAR(12) NOT NULL COMMENT 'deck, hand, board, discard',
+  `position` TINYINT UNSIGNED COMMENT 'Position in the given location (bottom of a pile is zero)',
+  `selected` BOOLEAN NOT NULL COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
+  PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- CREATE TABLE IF NOT EXISTS `card` (
---   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
---   `card_type` varchar(16) NOT NULL,
---   `card_type_arg` int(11) NOT NULL,
---   `card_location` varchar(16) NOT NULL,
---   `card_location_arg` int(11) NOT NULL,
---   PRIMARY KEY (`card_id`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-
--- Example 2: add a custom field to the standard "player" table
--- ALTER TABLE `player` ADD `player_my_custom_field` INT UNSIGNED NOT NULL DEFAULT '0';
-
+INSERT INTO `card` (`color`, `value`, `owner`, `location`, `position`, `selected`) VALUES
+  (0, 0, 0, 'deck', 0, FALSE),
+  (0, 1, 0, 'deck', 0, FALSE),
+  (0, 2, 0, 'deck', 0, FALSE),
+  (0, 3, 0, 'deck', 0, FALSE),
+  (0, 4, 0, 'deck', 0, FALSE),
+  (0, 5, 0, 'deck', 0, FALSE),
+  (0, 6, 0, 'deck', 0, FALSE),
+  (0, 7, 0, 'deck', 0, FALSE),
+  (0, 8, 0, 'deck', 0, FALSE),
+  (0, 9, 0, 'deck', 0, FALSE),
+  (1, 0, 0, 'deck', 0, FALSE),
+  (1, 1, 0, 'deck', 0, FALSE),
+  (1, 2, 0, 'deck', 0, FALSE),
+  (1, 3, 0, 'deck', 0, FALSE),
+  (1, 4, 0, 'deck', 0, FALSE),
+  (1, 5, 0, 'deck', 0, FALSE),
+  (1, 6, 0, 'deck', 0, FALSE),
+  (1, 7, 0, 'deck', 0, FALSE),
+  (1, 8, 0, 'deck', 0, FALSE),
+  (1, 9, 0, 'deck', 0, FALSE),
+  (2, 0, 0, 'deck', 0, FALSE),
+  (2, 1, 0, 'deck', 0, FALSE),
+  (2, 2, 0, 'deck', 0, FALSE),
+  (2, 3, 0, 'deck', 0, FALSE),
+  (2, 4, 0, 'deck', 0, FALSE),
+  (2, 5, 0, 'deck', 0, FALSE),
+  (2, 6, 0, 'deck', 0, FALSE),
+  (2, 7, 0, 'deck', 0, FALSE),
+  (2, 8, 0, 'deck', 0, FALSE),
+  (2, 9, 0, 'deck', 0, FALSE),
+  (3, 0, 0, 'deck', 0, FALSE),
+  (3, 1, 0, 'deck', 0, FALSE),
+  (3, 2, 0, 'deck', 0, FALSE),
+  (3, 3, 0, 'deck', 0, FALSE),
+  (3, 4, 0, 'deck', 0, FALSE),
+  (3, 5, 0, 'deck', 0, FALSE),
+  (3, 6, 0, 'deck', 0, FALSE),
+  (3, 7, 0, 'deck', 0, FALSE),
+  (3, 8, 0, 'deck', 0, FALSE),
+  (3, 9, 0, 'deck', 0, FALSE),
+  (4, 0, 0, 'deck', 0, FALSE),
+  (4, 1, 0, 'deck', 0, FALSE),
+  (4, 2, 0, 'deck', 0, FALSE),
+  (4, 3, 0, 'deck', 0, FALSE),
+  (4, 4, 0, 'deck', 0, FALSE),
+  (4, 5, 0, 'deck', 0, FALSE),
+  (4, 6, 0, 'deck', 0, FALSE),
+  (4, 7, 0, 'deck', 0, FALSE),
+  (4, 8, 0, 'deck', 0, FALSE),
+  (4, 9, 0, 'deck', 0, FALSE);
