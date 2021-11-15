@@ -45,28 +45,114 @@
 
 /* Note: you must not use any @import directive */
 
+.deck {
+    display: inline-block;
 
-/********* You can start writing your CSS below this line: **********/
+    height: 75px;
+    width: 55px;
 
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
 
-/*
-    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+.card {
+    height: 75px;
+    width: 55px;
 
-    .white_token {
-        background-image: url('img/tokens.png');
-        background-position: 0px 0px;
-    }
-    .black_token {
-        background-image: url('img/tokens.png');
-        background-position: -20px 0px;
-    }
-    .token {
-        width: 20px;
-        height: 20px;
-        background-repeat: none;
-    }
-*/
+    margin-bottom: 5px;
+    margin-right: 5px;
 
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
 
+.card.back {
+    background-image: url("img/card_backs.jpg");
+    background-size: 222px, auto;
+}
 
+.card.back.color_0 {
+    background-position-y: -0px;
+}
 
+.card.back.color_1 {
+    background-position-y: -76px;
+}
+
+.card.back.color_2 {
+    background-position-y: -151px;
+}
+
+.card.back.color_3 {
+    background-position-y: -227px;
+}
+
+.card.back.color_4 {
+    background-position-y: -302px;
+}
+
+.card.front {
+    background-image: url("img/card_fronts.jpg");
+    background-size: 555px, auto;
+}
+
+.card.front.color_0 {
+    background-position-y: -0px;
+}
+
+.card.front.color_1 {
+    background-position-y: -76px;
+}
+
+.card.front.color_2 {
+    background-position-y: -151px;
+}
+
+.card.front.color_3 {
+    background-position-y: -227px;
+}
+
+.card.front.color_4 {
+    background-position-y: -302px;
+}
+
+.card.front.value_1 {
+    background-position-x: -0px;
+}
+
+.card.front.value_2 {
+    background-position-x: -56px;
+}
+
+.card.front.value_3 {
+    background-position-x: -111px;
+}
+
+.card.front.value_4 {
+    background-position-x: -167px;
+}
+
+.card.front.value_5 {
+    background-position-x: -222px;
+}
+
+.card.front.value_6 {
+    background-position-x: -278px;
+}
+
+.card.front.value_7 {
+    background-position-x: -333px;
+}
+
+.card.front.value_8 {
+    background-position-x: -389px;
+}
+
+.card.front.value_9 {
+    background-position-x: -444px;
+}
+
+.card.front.value_10 {
+    background-position-x: -500px;
+}

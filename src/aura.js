@@ -18,17 +18,16 @@
 define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
-    "ebg/counter"
+    "ebg/counter",
+    "ebg/zone"
 ],
 function (dojo, declare) {
     return declare("bgagame.aura", ebg.core.gamegui, {
         constructor: function(){
             console.log('aura constructor');
-              
-            // Here, you can init the global variables of your user interface
-            // Example:
-            // this.myGlobalValue = 0;
 
+            this.zone = {};
+            this.incremental_id = 1000;
         },
         
         /*
@@ -44,16 +43,23 @@ function (dojo, declare) {
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
         
-        setup: function( gamedatas )
+        setup: function(gamedatas)
         {
             console.log( "Starting game setup" );
             
-            // Setting up player boards
-            for( var player_id in gamedatas.players )
-            {
-                var player = gamedatas.players[player_id];
-                         
-                // TODO: Setting up players boards if needed
+            this.zone.deck = {};
+            for (var player_id in gamedatas.players) {
+                this.zone.deck[player_id] = this.createZone('deck', player_id);
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 0, 1, 0, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 1, 3, 12, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 2, 6, 23, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 3, 9, 25, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 4, 10, 42, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 0, null, 0, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 1, null, 12, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 2, null, 23, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 3, null, 25, dojo.body());
+                this.createAndAddToZone(this.zone.deck[player_id], player_id, 4, null, 42, dojo.body());
             }
             
             // TODO: Set up your game interface here, according to "gamedatas"
@@ -150,13 +156,62 @@ function (dojo, declare) {
 
         ///////////////////////////////////////////////////
         //// Utility methods
+
+        uniqueId : function() {
+            this.incremental_id++;
+            return this.incremental_id;
+        },
+
+        getCardHTMLId : function(id, player_id, color, value) {
+            return ["card", value === null ? "back" : "front", "item_" + id, "player_" + player_id, "color_" + color, "value_" + value].join("__");
+        },
         
-        /*
+        getCardHTMLClass : function(id, player_id, color, value) {
+            return ["card", value === null ? "back" : "front", "item_" + id, "player_" + player_id, "color_" + color, "value_" + value].join(" ");
+        },
         
-            Here, you can defines some utility methods that you can use everywhere in your javascript
-            script.
-        
-        */
+        createCard : function(id, player_id, color, value) {
+            var HTML_id = this.getCardHTMLId(id, player_id, color, value);
+            var HTML_class = this.getCardHTMLClass(id, player_id, color, value);
+            return "<div id='" + HTML_id + "' class='" + HTML_class + "'></div>";
+        },
+
+        createZone : function(location, player_id) {
+            var div_id = location + "_" + player_id;
+
+            var width = 55;
+            var height = 75;
+            dojo.style(div_id, 'width', width + 'px');
+            dojo.style(div_id, 'height', height + 'px');
+
+            var zone =  new ebg.zone();
+            zone.create(this, div_id, width, height);
+            zone.setPattern('grid');
+            
+            zone.player_id = player_id;
+
+            return zone;
+        },
+
+        createAndAddToZone : function(zone, player_id, color, value, id, start) {
+            if (id === null) {
+                id = this.uniqueId();
+            }
+            var node = this.createCard(id, player_id, color, value);
+            dojo.place(node, start);
+            
+            this.addToZone(zone, player_id, color, value, id);
+        },
+
+        addToZone : function (zone, player_id, color, value, id) {
+            var HTML_id = this.getCardHTMLId(id, player_id, color, value);
+            console.log(HTML_id);
+            dojo.style(HTML_id, 'position', 'absolute')
+            
+            var weight = zone.items.length;
+            dojo.style(HTML_id, 'z-index', weight)
+            zone.placeInZone(HTML_id, weight);
+        },
 
 
         ///////////////////////////////////////////////////
