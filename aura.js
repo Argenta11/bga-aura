@@ -1,7 +1,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Aura implementation : © <Your name here> <Your email address here>
+ * Aura implementation : © Marta Martín de Argenta Hernández <martamartinargenta@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -19,15 +19,21 @@ define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
-    "ebg/zone"
+    "ebg/stock"
 ],
 function (dojo, declare) {
     return declare("bgagame.aura", ebg.core.gamegui, {
         constructor: function(){
-            console.log('aura constructor');
+            console.log('hearts constructor');
 
-            this.zone = {};
-            this.incremental_id = 1000;
+            // Here, you can init the global variables of your user interface
+            // Example:
+            // this.myGlobalValue = 0;            
+              
+            this.playerHand = null;
+            this.cardwidth = 72;
+            this.cardheight = 96;
+
         },
         
         /*
@@ -44,31 +50,40 @@ function (dojo, declare) {
         */
         
         setup: function(gamedatas)
-        {
-            console.log( "Starting game setup" );
+        {000
+            console.log( "start creating player boards" );
+            for( var player_id in gamedatas.players )
+            {
+                var player = gamedatas.players[player_id];
             
-            this.zone.deck = {};
-            for (var player_id in gamedatas.players) {
-                this.zone.deck[player_id] = this.createZone('deck', player_id);
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 0, 1, 0, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 1, 3, 12, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 2, 6, 23, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 3, 9, 25, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 4, 10, 42, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 0, null, 0, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 1, null, 12, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 2, null, 23, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 3, null, 25, dojo.body());
-                this.createAndAddToZone(this.zone.deck[player_id], player_id, 4, null, 42, dojo.body());
             }
+
+            // Player hand
+            this.playerHand = new ebg.stock();
+            this.playerHand.create( this, $('myhand'), this.cardwidth, this.cardheight );
+            this.playerHand.image_items_per_row = 8;    // Tiene 8 imagenes por fila
+            this.playerHand.create(this,$('myhand'),this.cardwidth,this.cardheight);
+
             
-            // TODO: Set up your game interface here, according to "gamedatas"
+            // Create cards types:
+            for( var color=0;color<=4;color++ )
+            {
+                for( var value=1;value<=10;value++ )
+                {
+                    // Build card type id
+                    var card_type_id = this.getCardUniqueId( color, value );
+                    this.playerHand.addItemType( card_type_id, card_type_id, g_gamethemeurl+'img/cards.jpg', card_type_id );
+                }
+            }
+
+            this.playerHand.addToStockWithId(this.getCardUniqueId(2,5),42)
             
- 
+            
+
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
-
-            console.log( "Ending game setup" );
+            
+            this.ensureSpecificImageLoading( ['../common/point.png'] );
         },
        
 
@@ -156,6 +171,12 @@ function (dojo, declare) {
 
         ///////////////////////////////////////////////////
         //// Utility methods
+
+        getCardUniqueId: function( color, value )
+        {
+            return (color-1)*13+(value-2);
+        },
+
 
         uniqueId : function() {
             this.incremental_id++;

@@ -1,7 +1,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Aura implementation : © <Your name here> <Your email address here>
+ * Aura implementation : © Marta Martín de Argenta Hernández <martamartinargenta@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -45,6 +45,49 @@
 
 /* Note: you must not use any @import directive */
 
+/** Table layout **/
+
+#playertables {
+    position: relative;
+    width: 710px;
+    height: 600px;
+}
+
+.playertablename {
+    font-weight: bold;
+}
+
+.playertable {
+    position: absolute;
+    text-align: center;
+    width: 180px;
+    height: 130px;
+}
+
+.playertable_N {
+    left: 0%;
+    top: 0px;
+}
+.playertable_S {
+    left: 0%;
+    top: 150px;
+}
+.playertable_W {
+    left: 0%;
+    top: 300px;
+}
+.playertable_E {
+    left: 0%;
+    top: 450px;
+}
+.playertablecard {
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+    width: 72px;
+    height: 96px;
+}
+
 .deck {
     display: inline-block;
 
@@ -66,6 +109,17 @@
     border-style: solid;
     border-radius: 4px;
 }
+
+.playertablecard{
+    display: inline-block;
+    position: relative;
+    margin-top: 5px;
+    width: 72px;
+    height: 96px;
+    background-image: url('img/card_fronts.jpg');
+}
+
+
 
 .card.back {
     background-image: url("img/card_backs.jpg");
