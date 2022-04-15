@@ -111,6 +111,11 @@ $gameinfos = array(
 // If you want to disable this, set this to true
 'disable_player_order_swap_on_rematch' => false,
 
+'custom_buy_button' => array(
+    'url' => 'https://www.amazon.com/Aura-Ultimate-Family-Strategy-Game/dp/B072JX1HV8',
+    'label' => 'Amazon',
+ ),
+
 // Game interface width range (pixels)
 // Note: game interface = space on the left side, without the column on the right
 'game_interface_width' => array(
@@ -133,9 +138,8 @@ $gameinfos = array(
 // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
 // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
 'presentation' => array(
-//    totranslate("This wonderful game is about geometric shapes!"),
-//    totranslate("It was awarded best triangle game of the year in 2005 and nominated for the Spiel des Jahres."),
-//    ...
+    totranslate("Aura is an easy to learn, but difficult to master, strategy card game for 2-4 players. Enjoyed by casual and hardcore gamers alike, Aura is the perfect gateway into the world of modern card games. Outwit and bluff your way to victory, but remain flexible, because when the cards are revealed anything can happen."),
+    totranslate("Begin the game with your own deck of cards. Five distinct types of cards are represented by the five colors in your deck. The colors are visible on both the backs and fronts of each card to give the effect of an observable aura when in your hand. Take turns playing cards face down in an attempt to both protect your deck and to remove cards from your opponents’ deck. Win by having the most cards remaining at the end of the game."),
 ),
 
 // Games categories

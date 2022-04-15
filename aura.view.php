@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Aura implementation : © <Your name here> <Your email address here>
+ * Aura implementation : © Marta Martín de Argenta Hernández <martamartinargenta@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -30,13 +30,24 @@
     function getGameName() {
       return "aura";
     }
+    
 
-  	function build_page($viewArgs) {		
-      $players = $this->game->loadPlayersBasicInfos();
-
-      $this->page->begin_block("aura_aura", "deck");
-      foreach($players as $player_id => $player) {
-        $this->page->insert_block("deck", array("PLAYER_ID" => $player_id));
+    function build_page( $viewArgs )
+  	{		
+  	    // Get players & players number
+        $players = $this->game->loadPlayersBasicInfos();
+        $players_nbr = count( $players );
+        $template = self::getGameName() . "_" . self::getGameName();
+        $directions = array( 'S', 'W', 'N', 'E' );
+        
+      $this->page->begin_block($template, "player");
+      foreach($players as $player_id => $info) {
+        $dir = array_shift($directions);
+        $this->page->insert_block("player", array("PLAYER_ID" => $player_id,
+              "PLAYER_NAME" => $players [$player_id]['player_name'],
+              "PLAYER_COLOR" => $players[$player_id]['player_color'],
+              "DIR" => $dir ));
       }
+      $this->tpl['MY_HAND'] = self::_("My hand");
   	}
   }
