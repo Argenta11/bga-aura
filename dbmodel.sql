@@ -31,12 +31,12 @@ CREATE TABLE IF NOT EXISTS `card` (
 
 /* Table used to manage the execution of nested effects */
 CREATE TABLE IF NOT EXISTS `card2` (
- `card_id` SMALLINT UNSIGNED NOT NULL COMMENT '-1 means no card',
- `value` SMALLINT COMMENT '-1 means no card',
- `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
+ `card_id` SMALLINT UNSIGNED NOT NULL,
+ `value` SMALLINT COMMENT '1 to 8 for cards with numbers on them, 9 for wild card, 0 for Aura card',
+ `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (deck, hand, board or NULL)',
  `owner_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
- `position` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
- `color` VARCHAR(10) COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `position` TINYINT COMMENT '-Position in the given location (bottom of a pile is zero)',
+ `color` VARCHAR(10) COMMENT 'ED1651(pink), 392666 (purple), 91D4E4 (blue), 48BA7F (green), D3D0C1 (gray), AURA (Aura Card)',
  `selected` BOOLEAN NOT NULL COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
   PRIMARY KEY(`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

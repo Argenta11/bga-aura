@@ -90,18 +90,24 @@ class Aura extends Table {
         ) VALUES";
 
         $a = 0;
-        for($owner=0;$owner<4;$owner++){
+        for($owner=0;$owner<count($players);$owner++){
             foreach($colors as $color){
-                for($value=0;$value<9;$value++){
-                    if($owner==3 && $value==8 && $color==$colors[4]){
-                        $busqueda .= " (" . $a . ", '" . $color . "', " . strval($value) ."," . strval($owner) . ", 'deck', -1, false)";
-                    }else{
+                for($value=1;$value<=9;$value++){
                         $busqueda .= " (" . $a . ", '" . $color . "', " . strval($value) ."," . strval($owner) . ", 'deck', -1, false),";
-                }
+                        $a++;
+        }}
+            if($owner==count($players)-1){
+                $busqueda .= " (" . $a . ", 'AURA', 0," . strval($owner) . ", 'deck', 45, false)";
+            }else{
+                $busqueda .= " (" . $a . ", 'AURA', 0," . strval($owner) . ", 'deck', 45, false),";
+            }
             $a++;
-        }}}
+        }
+        
         self::DbQuery($busqueda);
         self::shuffle();
+        self::hands();
+        self::updatepositions();
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -143,7 +149,8 @@ class Aura extends Table {
             FROM
                 card2 
             WHERE
-                card_location = 'deck'
+                card_location = 'deck' AND
+                NOT value = 0
         ");
 
         self::DbQuery("
@@ -186,6 +193,53 @@ class Aura extends Table {
             shuffled
         ");
 
+    }
+
+    function hands(){
+        self::DbQuery("
+        UPDATE card2
+        SET
+            card_location = 'hand'
+        WHERE
+            position < 9
+        ");
+    }
+
+    function updatepositions(){
+        self::DbQuery("
+            INSERT INTO shuffled
+                SELECT
+                    a.card_id,
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM
+                            card2 AS b
+                        WHERE
+                            b.owner_id = a.owner_id AND
+                            b.position < a.position AND
+                            b.card_location = a.card_location
+                    ) AS new_position
+                FROM
+                    card2 AS a
+                WHERE a.card_location = 'deck'
+        ");
+        self::DbQuery("
+            UPDATE
+                card2 AS a
+                INNER JOIN shuffled AS b
+                    ON a.card_id = b.card_id
+            SET
+                a.position = b.new_position
+            WHERE
+                b.new_position IS NOT NULL
+        ");
+        
+        // Empty auxiliary tables
+        self::DbQuery("
+        DELETE FROM
+            shuffled
+        ");
     }
 
     /*
