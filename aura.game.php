@@ -2,7 +2,7 @@
  /**
   *------
   * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
-  * Aura implementation : © Marta Martín de Argenta Hernández <martamartinargenta@gmail.com> Micah Stairs <micah.stairs@gmail.com>
+  * Aura implementation : © Marta Martín de Argenta Hernández <martamargenta@gmail.com> Micah Stairs <micah.stairs@gmail.com>
   * 
   * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -75,7 +75,39 @@ class Aura extends Table {
         //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
         // TODO: setup the initial game situation here
-       
+        $cartas = array();
+        $id = 0;
+        $colors = array("ED1651", "392666", "91D4E4", "48BA7F", "D3D0C1");
+        $busqueda = "
+        INSERT INTO card2 (
+            card_id,
+            color,
+            value,
+            owner_id,
+            card_location,
+            position,
+            selected
+        ) VALUES";
+
+        $a = 0;
+        for($owner=0;$owner<count($players);$owner++){
+            foreach($colors as $color){
+                for($value=1;$value<=9;$value++){
+                        $busqueda .= " (" . $a . ", '" . $color . "', " . strval($value) ."," . strval($owner) . ", 'deck', -1, false),";
+                        $a++;
+        }}
+            if($owner==count($players)-1){
+                $busqueda .= " (" . $a . ", 'AURA', 0," . strval($owner) . ", 'deck', 45, false)";
+            }else{
+                $busqueda .= " (" . $a . ", 'AURA', 0," . strval($owner) . ", 'deck', 45, false),";
+            }
+            $a++;
+        }
+        
+        self::DbQuery($busqueda);
+        self::shuffle();
+        self::hands();
+        self::updatepositions();
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -105,6 +137,109 @@ class Aura extends Table {
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
   
         return $result;
+    }
+
+    function shuffle(){
+        self::DbQuery("
+        INSERT INTO random
+            SELECT
+                card_id,
+                owner_id,
+                RAND() AS random_number
+            FROM
+                card2 
+            WHERE
+                card_location = 'deck' AND
+                NOT value = 0
+        ");
+
+        self::DbQuery("
+        INSERT INTO shuffled
+            SELECT
+                a.card_id,
+                (
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        random AS b
+                    WHERE
+                        b.owner_id = a.owner_id AND
+                        b.random_number < a.random_number
+                ) AS new_position
+            FROM
+                random AS a
+        ");
+
+        // Assign this new position to the actual database
+       self::DbQuery("
+        UPDATE
+            card2 AS a
+            INNER JOIN shuffled AS b
+                ON a.card_id = b.card_id
+        SET
+            a.position = b.new_position
+        WHERE
+            b.new_position IS NOT NULL
+        ");
+        
+        // Empty auxiliary tables
+        self::DbQuery("
+        DELETE FROM
+            random
+        ");
+        
+        self::DbQuery("
+        DELETE FROM
+            shuffled
+        ");
+
+    }
+
+    function hands(){
+        self::DbQuery("
+        UPDATE card2
+        SET
+            card_location = 'hand'
+        WHERE
+            position < 9
+        ");
+    }
+
+    function updatepositions(){
+        self::DbQuery("
+            INSERT INTO shuffled
+                SELECT
+                    a.card_id,
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM
+                            card2 AS b
+                        WHERE
+                            b.owner_id = a.owner_id AND
+                            b.position < a.position AND
+                            b.card_location = a.card_location
+                    ) AS new_position
+                FROM
+                    card2 AS a
+                WHERE a.card_location = 'deck'
+        ");
+        self::DbQuery("
+            UPDATE
+                card2 AS a
+                INNER JOIN shuffled AS b
+                    ON a.card_id = b.card_id
+            SET
+                a.position = b.new_position
+            WHERE
+                b.new_position IS NOT NULL
+        ");
+        
+        // Empty auxiliary tables
+        self::DbQuery("
+        DELETE FROM
+            shuffled
+        ");
     }
 
     /*
@@ -146,7 +281,6 @@ class Aura extends Table {
     /*
     
     Example:
-
     function playCard( $card_id )
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
@@ -209,7 +343,6 @@ class Aura extends Table {
     /*
     
     Example for game state "MyGameState":
-
     function stMyGameState()
     {
         // Do some stuff ...
